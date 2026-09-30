@@ -14,7 +14,10 @@ export async function GET(request: Request) {
     const list: DoubanItem[] = items.map((item) => ({
       id: item.id,
       title: item.title,
-      poster: item.poster,
+      // 浏览器直连豆瓣图床会因防盗链失败，改由已有图片代理带上豆瓣 Referer。
+      poster: item.poster
+        ? `/api/image-proxy?url=${encodeURIComponent(item.poster)}`
+        : '',
       rate: item.rate,
       year: item.year,
     }));
