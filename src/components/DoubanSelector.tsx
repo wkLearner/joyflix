@@ -4,6 +4,8 @@
 
 import React, { useEffect, useRef, useState } from 'react';
 
+import { CHILD_FILTERS } from '@/lib/children-catalog';
+
 import MultiLevelSelector from './MultiLevelSelector';
 import WeekdaySelector from './WeekdaySelector';
 
@@ -101,15 +103,8 @@ const DoubanSelector: React.FC<DoubanSelectorProps> = ({
     { label: '剧场版', value: '剧场版' },
   ];
 
-  // 儿童分类使用豆瓣热门片单标签，结果以适合儿童观看的影片为主
-  const childPrimaryOptions: SelectorOption[] = [
-    { label: '儿童', value: '儿童' },
-    { label: '动画片', value: '动画片' },
-    { label: '卡通', value: '卡通' },
-    { label: '童话', value: '童话' },
-    { label: '迪士尼', value: '迪士尼动画' },
-    { label: '皮克斯', value: '皮克斯' },
-  ];
+  // 儿童分类是策划片单，筛选项对应片单分组，而不是豆瓣标签
+  const childPrimaryOptions: SelectorOption[] = CHILD_FILTERS;
 
   // 处理多级选择器变化
   const handleMultiLevelChange = (values: Record<string, string>) => {
@@ -593,7 +588,7 @@ const DoubanSelector: React.FC<DoubanSelectorProps> = ({
         </div>
       )}
 
-      {/* 儿童类型 - 按豆瓣儿童向片单筛选 */}
+      {/* 儿童类型 - 按策划片单分组筛选 */}
       {type === 'child' && (
         <div className='space-y-3 sm:space-y-4'>
           <div className='flex flex-col sm:flex-row sm:items-center gap-2'>

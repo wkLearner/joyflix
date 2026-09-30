@@ -90,6 +90,11 @@ const Sidebar = ({ activePath = '/', isTabletMode = false, onCategorySelect }: S
 
   const [menuItems, setMenuItems] = useState<MenuItem[]>([
     {
+      icon: Baby,
+      label: '儿童',
+      href: '/douban?type=child',
+    },
+    {
       icon: Clapperboard,
       label: '电影',
       href: '/douban?type=movie',
@@ -108,11 +113,6 @@ const Sidebar = ({ activePath = '/', isTabletMode = false, onCategorySelect }: S
       icon: Drama,
       label: '综艺',
       href: '/douban?type=show',
-    },
-    {
-      icon: Baby,
-      label: '儿童',
-      href: '/douban?type=child',
     },
   ]);
 

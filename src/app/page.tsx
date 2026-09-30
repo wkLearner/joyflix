@@ -22,7 +22,7 @@ import {
   getAllPlayRecords,
   subscribeToDataUpdates,
 } from '@/lib/db.client';
-import { getDoubanCategories, getDoubanList } from '@/lib/douban.client';
+import { getChildrenShelf, getDoubanCategories, getDoubanList } from '@/lib/douban.client';
 import { DoubanItem } from '@/lib/types';
 
 import CapsuleSwitch from '@/components/CapsuleSwitch';
@@ -104,7 +104,7 @@ function HomeClient() {
             getDoubanCategories({ kind: 'tv', category: 'tv', type: 'tv' }),
             getDoubanCategories({ kind: 'tv', category: 'show', type: 'show' }),
             GetBangumiCalendarData(),
-            getDoubanList({ tag: '儿童', type: 'movie', pageLimit: 25, pageStart: 0 }),
+            getChildrenShelf('全部'),
           ]);
 
         if (moviesData.code === 200) {
@@ -272,6 +272,47 @@ function HomeClient() {
             <>
               {/* 继续观看 */}
               <ContinueWatching />
+
+              {/* 热门儿童 */}
+              <section className='mb-8'>
+                <div className='mb-4 flex items-center justify-between'>
+                  <h2
+                    onClick={() => {
+                      window.dispatchEvent(new CustomEvent('clearHomepageScroll'));
+                      router.push('/douban?type=child');
+                    }}
+                    className='text-xl font-bold text-gray-800 dark:text-gray-200 flex items-center cursor-pointer hover:text-gray-900 dark:hover:text-white hover:scale-[1.02] transition-transform duration-200'
+                  >
+                    热门儿童
+                    <ChevronRight className='w-5 h-5 ml-1' />
+                  </h2>
+                </div>
+                <ScrollableRow>
+                  {loading
+                    ? Array.from({ length: 8 }).map((_, index) => (
+                        <VideoCardSkeleton
+                          key={index}
+                          className="min-w-[96px] w-24 sm:min-w-[180px] sm:w-44"
+                          showYear={true}
+                        />
+                      ))
+                    : hotChildren.map((item, index) => (
+                        <div
+                          key={index}
+                          className='min-w-[96px] w-24 sm:min-w-[180px] sm:w-44'
+                        >
+                          <VideoCard
+                            from='douban'
+                            title={item.title}
+                            poster={item.poster}
+                            douban_id={Number(item.id)}
+                            rate={item.rate}
+                            year={item.year}
+                          />
+                        </div>
+                      ))}
+                </ScrollableRow>
+              </section>
 
               {/* 热门电影 */}
               <section className='mb-8'>
@@ -468,48 +509,6 @@ function HomeClient() {
                             douban_id={Number(show.id)}
                             rate={show.rate}
                             year={show.year}
-                          />
-                        </div>
-                      ))}
-                </ScrollableRow>
-              </section>
-
-              {/* 热门儿童 */}
-              <section className='mb-8'>
-                <div className='mb-4 flex items-center justify-between'>
-                  <h2
-                    onClick={() => {
-                      window.dispatchEvent(new CustomEvent('clearHomepageScroll'));
-                      router.push('/douban?type=child');
-                    }}
-                    className='text-xl font-bold text-gray-800 dark:text-gray-200 flex items-center cursor-pointer hover:text-gray-900 dark:hover:text-white hover:scale-[1.02] transition-transform duration-200'
-                  >
-                    热门儿童
-                    <ChevronRight className='w-5 h-5 ml-1' />
-                  </h2>
-                </div>
-                <ScrollableRow>
-                  {loading
-                    ? Array.from({ length: 8 }).map((_, index) => (
-                        <VideoCardSkeleton
-                          key={index}
-                          className="min-w-[96px] w-24 sm:min-w-[180px] sm:w-44"
-                          showYear={true}
-                        />
-                      ))
-                    : hotChildren.map((item, index) => (
-                        <div
-                          key={index}
-                          className='min-w-[96px] w-24 sm:min-w-[180px] sm:w-44'
-                        >
-                          <VideoCard
-                            from='douban'
-                            title={item.title}
-                            poster={item.poster}
-                            douban_id={Number(item.id)}
-                            rate={item.rate}
-                            year={item.year}
-                            type='movie'
                           />
                         </div>
                       ))}

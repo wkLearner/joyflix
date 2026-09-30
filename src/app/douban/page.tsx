@@ -6,7 +6,7 @@ import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { Suspense, useCallback, useEffect, useRef, useState } from 'react';
 
 import { GetBangumiCalendarData } from '@/lib/bangumi.client';
-import { getDoubanCategories, getDoubanList, getDoubanRecommends } from '@/lib/douban.client';
+import { getChildrenShelf, getDoubanCategories, getDoubanList, getDoubanRecommends } from '@/lib/douban.client';
 import { getScrollCache, clearScrollCache } from '@/lib/scrollCache';
 import { DoubanItem, DoubanResult } from '@/lib/types';
 import { RestorableData, useScrollRestoration } from '@/lib/useScrollRestoration';
@@ -129,7 +129,7 @@ function DoubanPageClient() {
       else if (type === 'tv') { setPrimarySelection(''); setSecondarySelection('tv'); }
       else if (type === 'show') { setPrimarySelection(''); setSecondarySelection('show'); }
       else if (type === 'anime') { setPrimarySelection('每日放送'); setSecondarySelection('全部'); }
-      else if (type === 'child') { setPrimarySelection('儿童'); setSecondarySelection(''); }
+      else if (type === 'child') { setPrimarySelection('全部'); setSecondarySelection(''); }
       else { setPrimarySelection(''); setSecondarySelection('全部'); }
     }
     setMultiLevelValues({ type: 'all', region: 'all', year: 'all', platform: 'all', label: 'all', sort: 'T' });
@@ -179,7 +179,7 @@ function DoubanPageClient() {
           data = await getDoubanList({ tag: selectedCategory.query, type: selectedCategory.type, pageLimit: 25, pageStart: 0 });
         } else { throw new Error('没有找到对应的分类'); }
       } else if (type === 'child') {
-        data = await getDoubanList({ tag: primarySelection || '儿童', type: 'movie', pageLimit: 25, pageStart: 0 });
+        data = await getChildrenShelf(primarySelection || '全部');
       } else if (type === 'anime' && primarySelection === '每日放送') {
         const calendarData = await GetBangumiCalendarData();
         const weekdayData = calendarData.find((item) => item.weekday.en === selectedWeekday);
@@ -193,10 +193,10 @@ function DoubanPageClient() {
       } else {
         data = await getDoubanCategories(getRequestParams(0));
       }
-      if (data.code === 200) {
+        if (data.code === 200) {
         if (isSnapshotEqual(requestSnapshot, { ...currentParamsRef.current })) {
           setDoubanData(data.list);
-          setHasMore(data.list.length !== 0);
+          setHasMore(type === 'child' ? false : data.list.length !== 0);
         }
       } else { throw new Error(data.message || '获取数据失败'); }
     } catch (err) {
@@ -236,7 +236,7 @@ function DoubanPageClient() {
             data = await getDoubanList({ tag: selectedCategory.query, type: selectedCategory.type, pageLimit: 25, pageStart: currentPage * 25 });
           } else { throw new Error('没有找到对应的分类'); }
         } else if (type === 'child') {
-          data = await getDoubanList({ tag: primarySelection || '儿童', type: 'movie', pageLimit: 25, pageStart: currentPage * 25 });
+          data = { code: 200, message: 'success', list: [] };
         } else if (type === 'anime' && primarySelection === '每日放送') {
           data = { code: 200, message: 'success', list: [] };
         } else if (type === 'anime') {
@@ -365,7 +365,7 @@ function DoubanPageClient() {
                   douban_id={Number(item.id)}
                   rate={item.rate}
                   year={item.year}
-                  type={type === 'movie' || type === 'child' ? 'movie' : ''}
+                  type={type === 'movie' ? 'movie' : ''}
                   isBangumi={type === 'anime' && primarySelection === '每日放送'}
                   onNavigate={saveScrollState}
                 />

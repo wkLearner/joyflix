@@ -221,6 +221,16 @@ interface DoubanListParams {
   pageStart?: number;
 }
 
+/**
+ * 儿童片单来自服务端按片名检索的豆瓣条目，不走「儿童」标签热门片单。
+ */
+export async function getChildrenShelf(group = '全部'): Promise<DoubanResult> {
+  const response = await fetch(
+    `/api/douban/children?group=${encodeURIComponent(group)}`
+  );
+  return response.json();
+}
+
 export async function getDoubanList(
   params: DoubanListParams
 ): Promise<DoubanResult> {

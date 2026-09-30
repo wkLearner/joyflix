@@ -34,6 +34,11 @@ const MobileBottomNav = ({ activePath }: MobileBottomNavProps) => {
     { icon: Home, label: '首页', href: '/' },
     { icon: Search, label: '搜索', href: '/search' },
     {
+      icon: Baby,
+      label: '儿童',
+      href: '/douban?type=child',
+    },
+    {
       icon: Clapperboard,
       label: '电影',
       href: '/douban?type=movie',
@@ -52,11 +57,6 @@ const MobileBottomNav = ({ activePath }: MobileBottomNavProps) => {
       icon: Drama,
       label: '综艺',
       href: '/douban?type=show',
-    },
-    {
-      icon: Baby,
-      label: '儿童',
-      href: '/douban?type=child',
     },
   ]);
 
