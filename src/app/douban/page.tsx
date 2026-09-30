@@ -129,6 +129,7 @@ function DoubanPageClient() {
       else if (type === 'tv') { setPrimarySelection(''); setSecondarySelection('tv'); }
       else if (type === 'show') { setPrimarySelection(''); setSecondarySelection('show'); }
       else if (type === 'anime') { setPrimarySelection('每日放送'); setSecondarySelection('全部'); }
+      else if (type === 'child') { setPrimarySelection('儿童'); setSecondarySelection(''); }
       else { setPrimarySelection(''); setSecondarySelection('全部'); }
     }
     setMultiLevelValues({ type: 'all', region: 'all', year: 'all', platform: 'all', label: 'all', sort: 'T' });
@@ -177,6 +178,8 @@ function DoubanPageClient() {
         if (selectedCategory) {
           data = await getDoubanList({ tag: selectedCategory.query, type: selectedCategory.type, pageLimit: 25, pageStart: 0 });
         } else { throw new Error('没有找到对应的分类'); }
+      } else if (type === 'child') {
+        data = await getDoubanList({ tag: primarySelection || '儿童', type: 'movie', pageLimit: 25, pageStart: 0 });
       } else if (type === 'anime' && primarySelection === '每日放送') {
         const calendarData = await GetBangumiCalendarData();
         const weekdayData = calendarData.find((item) => item.weekday.en === selectedWeekday);
@@ -232,6 +235,8 @@ function DoubanPageClient() {
           if (selectedCategory) {
             data = await getDoubanList({ tag: selectedCategory.query, type: selectedCategory.type, pageLimit: 25, pageStart: currentPage * 25 });
           } else { throw new Error('没有找到对应的分类'); }
+        } else if (type === 'child') {
+          data = await getDoubanList({ tag: primarySelection || '儿童', type: 'movie', pageLimit: 25, pageStart: currentPage * 25 });
         } else if (type === 'anime' && primarySelection === '每日放送') {
           data = { code: 200, message: 'success', list: [] };
         } else if (type === 'anime') {
@@ -325,7 +330,7 @@ function DoubanPageClient() {
     setSelectedWeekday(weekday);
   }, [handleSelectionChange]);
 
-  const getPageTitle = () => (type === 'movie' ? '电影' : type === 'tv' ? '电视剧' : type === 'anime' ? '动漫' : type === 'show' ? '综艺' : '更多');
+  const getPageTitle = () => (type === 'movie' ? '电影' : type === 'tv' ? '电视剧' : type === 'anime' ? '动漫' : type === 'show' ? '综艺' : type === 'child' ? '儿童' : '更多');
 
   
 
@@ -341,7 +346,7 @@ function DoubanPageClient() {
         <div className="mb-6 sm:mb-8 space-y-4 sm:space-y-6 sm:pt-6">
           <div className='bg-gray-50/60 dark:bg-gray-800/40 rounded-2xl p-4 sm:p-6 border border-gray-200/30 dark:border-gray-700/30 backdrop-blur-sm'>
             {type !== 'custom' ? (
-              <DoubanSelector type={type as 'movie' | 'tv' | 'show' | 'anime'} primarySelection={primarySelection} secondarySelection={secondarySelection} onPrimaryChange={handlePrimaryChange} onSecondaryChange={handleSecondaryChange} onMultiLevelChange={handleMultiLevelChange} onWeekdayChange={handleWeekdayChange} />
+              <DoubanSelector type={type as 'movie' | 'tv' | 'show' | 'anime' | 'child'} primarySelection={primarySelection} secondarySelection={secondarySelection} onPrimaryChange={handlePrimaryChange} onSecondaryChange={handleSecondaryChange} onMultiLevelChange={handleMultiLevelChange} onWeekdayChange={handleWeekdayChange} />
             ) : (
               <DoubanCustomSelector customCategories={customCategories} primarySelection={primarySelection} secondarySelection={secondarySelection} onPrimaryChange={handlePrimaryChange} onSecondaryChange={handleSecondaryChange} />
             )}
@@ -360,7 +365,7 @@ function DoubanPageClient() {
                   douban_id={Number(item.id)}
                   rate={item.rate}
                   year={item.year}
-                  type={type === 'movie' ? 'movie' : ''}
+                  type={type === 'movie' || type === 'child' ? 'movie' : ''}
                   isBangumi={type === 'anime' && primarySelection === '每日放送'}
                   onNavigate={saveScrollState}
                 />

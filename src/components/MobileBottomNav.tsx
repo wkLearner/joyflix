@@ -3,6 +3,7 @@
 'use client';
 
 import {
+  Baby,
   Twitter,
   CircleEllipsis,
   Drama,
@@ -51,6 +52,11 @@ const MobileBottomNav = ({ activePath }: MobileBottomNavProps) => {
       icon: Drama,
       label: '综艺',
       href: '/douban?type=show',
+    },
+    {
+      icon: Baby,
+      label: '儿童',
+      href: '/douban?type=child',
     },
   ]);
 

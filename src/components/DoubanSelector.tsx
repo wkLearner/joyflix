@@ -13,7 +13,7 @@ interface SelectorOption {
 }
 
 interface DoubanSelectorProps {
-  type: 'movie' | 'tv' | 'show' | 'anime';
+  type: 'movie' | 'tv' | 'show' | 'anime' | 'child';
   primarySelection?: string;
   secondarySelection?: string;
   onPrimaryChange: (value: string) => void;
@@ -101,6 +101,16 @@ const DoubanSelector: React.FC<DoubanSelectorProps> = ({
     { label: '剧场版', value: '剧场版' },
   ];
 
+  // 儿童分类使用豆瓣热门片单标签，结果以适合儿童观看的影片为主
+  const childPrimaryOptions: SelectorOption[] = [
+    { label: '儿童', value: '儿童' },
+    { label: '动画片', value: '动画片' },
+    { label: '卡通', value: '卡通' },
+    { label: '童话', value: '童话' },
+    { label: '迪士尼', value: '迪士尼动画' },
+    { label: '皮克斯', value: '皮克斯' },
+  ];
+
   // 处理多级选择器变化
   const handleMultiLevelChange = (values: Record<string, string>) => {
     onMultiLevelChange?.(values);
@@ -184,6 +194,17 @@ const DoubanSelector: React.FC<DoubanSelectorProps> = ({
         primaryButtonRefs,
         setPrimaryIndicatorStyle
       );
+    } else if (type === 'child') {
+      const activeIndex = childPrimaryOptions.findIndex(
+        (opt) =>
+          opt.value === (primarySelection || childPrimaryOptions[0].value)
+      );
+      updateIndicatorPosition(
+        activeIndex,
+        primaryContainerRef,
+        primaryButtonRefs,
+        setPrimaryIndicatorStyle
+      );
     }
 
     // 副选择器初始位置
@@ -252,6 +273,17 @@ const DoubanSelector: React.FC<DoubanSelectorProps> = ({
       return cleanup;
     } else if (type === 'show') {
       const activeIndex = showPrimaryOptions.findIndex(
+        (opt) => opt.value === primarySelection
+      );
+      const cleanup = updateIndicatorPosition(
+        activeIndex,
+        primaryContainerRef,
+        primaryButtonRefs,
+        setPrimaryIndicatorStyle
+      );
+      return cleanup;
+    } else if (type === 'child') {
+      const activeIndex = childPrimaryOptions.findIndex(
         (opt) => opt.value === primarySelection
       );
       const cleanup = updateIndicatorPosition(
@@ -558,6 +590,25 @@ const DoubanSelector: React.FC<DoubanSelectorProps> = ({
               </div>
             </div>
           ) : null}
+        </div>
+      )}
+
+      {/* 儿童类型 - 按豆瓣儿童向片单筛选 */}
+      {type === 'child' && (
+        <div className='space-y-3 sm:space-y-4'>
+          <div className='flex flex-col sm:flex-row sm:items-center gap-2'>
+            <span className='text-xs sm:text-sm font-medium text-gray-600 dark:text-gray-400 min-w-[48px]'>
+              分类
+            </span>
+            <div className='overflow-x-auto'>
+              {renderCapsuleSelector(
+                childPrimaryOptions,
+                primarySelection || childPrimaryOptions[0].value,
+                onPrimaryChange,
+                true
+              )}
+            </div>
+          </div>
         </div>
       )}
     </div>

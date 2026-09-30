@@ -36,7 +36,7 @@ export const useScrollRestoration = ({
   }, [mainContainerRef]);
 
   const areTopTextsRendered = (container: HTMLElement): boolean => {
-    const texts = ['电影', '剧集', '综艺', '动漫', '更多'];
+    const texts = ['电影', '剧集', '综艺', '动漫', '儿童', '更多'];
     for (const text of texts) {
       if (container.innerText.includes(text)) {
         return true;

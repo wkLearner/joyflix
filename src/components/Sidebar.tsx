@@ -2,7 +2,7 @@
 
 'use client';
 
-import { Twitter, CircleEllipsis, Drama, Clapperboard, Home, Tv } from 'lucide-react';
+import { Baby, Twitter, CircleEllipsis, Drama, Clapperboard, Home, Tv } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import {
@@ -108,6 +108,11 @@ const Sidebar = ({ activePath = '/', isTabletMode = false, onCategorySelect }: S
       icon: Drama,
       label: '综艺',
       href: '/douban?type=show',
+    },
+    {
+      icon: Baby,
+      label: '儿童',
+      href: '/douban?type=child',
     },
   ]);
 
